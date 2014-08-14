@@ -22,7 +22,6 @@
 
 #import "AFHTTPClientLogger.h"
 #import "AFHTTPRequestOperation.h"
-#import "AFJSONRequestOperation.h"
 
 #import <objc/runtime.h>
 
@@ -86,9 +85,9 @@ typedef NSString * (^AFHTTPClientLoggerFormatBlock)(AFHTTPRequestOperation *oper
 
     id body = nil;
     if ([operation.request HTTPBody] && self.level <= AFHTTPClientLogLevelVerbose) {
-        if ([operation isKindOfClass:[AFJSONRequestOperation class]]) {
-            body = [NSJSONSerialization JSONObjectWithData:[operation.request HTTPBody] options:NSJSONReadingAllowFragments error:nil];
-        } else {
+        NSError *error = nil;
+        body = [NSJSONSerialization JSONObjectWithData:[operation.request HTTPBody] options:NSJSONReadingAllowFragments error:&error];
+        if (error) {
             body = [[NSString alloc] initWithData:[operation.request HTTPBody] encoding:NSUTF8StringEncoding];
         }
     }
@@ -131,7 +130,7 @@ typedef NSString * (^AFHTTPClientLoggerFormatBlock)(AFHTTPRequestOperation *oper
     }
 
     NSURL *URL = (operation.response) ? [operation.response URL] : [operation.request URL];
-    id responseObject = ([operation isKindOfClass:[AFJSONRequestOperation class]]) ? ((AFJSONRequestOperation *)operation).responseJSON : operation.responseString;
+    id responseObject = operation.responseObject;
 
     if (operation.error) {
         switch (self.level) {
@@ -173,7 +172,7 @@ typedef NSString * (^AFHTTPClientLoggerFormatBlock)(AFHTTPRequestOperation *oper
 
 #pragma mark -
 
-@implementation AFHTTPClient (Logging)
+@implementation AFHTTPRequestOperationManager (Logging)
 
 static char AFHTTPClientLoggerObject;
 

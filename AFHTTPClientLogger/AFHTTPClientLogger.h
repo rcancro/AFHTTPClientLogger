@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import "AFHTTPClient.h"
+#import "AFHTTPRequestOperationManager.h"
 
 typedef enum {
     AFHTTPClientLogLevelDebug,
@@ -67,7 +67,7 @@ typedef enum {
 /**
  `AFHTTPClient` category that provides access to the logger.
 */
-@interface AFHTTPClient (Logging)
+@interface AFHTTPRequestOperationManager (Logging)
 
 /**
  The HTTP client's logger. A logger will be created if one doesn't already exist.
